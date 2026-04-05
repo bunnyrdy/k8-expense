@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mysql
+  labels:
+    app: nginx
+    tier: frontend
+    
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: nginx
+      tier: frontend
+  template:
+    metadata:
+      labels:
+        app: nginx
+        tier: frontend
+    spec:
+      containers:
+      - name: nginx
+        image: bunnyreddie/nginx:3.0
+        ports:
+        - containerPort: 80
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: nginx
+spec:
+  type: LoadBalancer
+  selector: # labels are used as selectors
+    app: nginx
+    tier: frontend
+      
+  ports:
+  - protocol: TCP
+    port: 80 # service port
+    targetPort: 80
+    nodePort: 30007
